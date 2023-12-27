@@ -10,13 +10,21 @@
   <textarea id="fileContent" style="width: 100%; height: 200px;"></textarea>
 
   <script>
+    //ベースとなるファイルハンドラ
     let fileHandle = null;
 
+    /**
+     * ファイルを読み込む
+     */
     async function readFile() {
       try {
+        //ファイルを開くプロンプトを開きファイルハンドラを取得
         [fileHandle] = await window.showOpenFilePicker();
+        //ファイルハンドラからファイルの読み込みを行う
         const file = await fileHandle.getFile();
+        //ファイルの中身のテキストを取得
         const text = await file.text();
+        //取得したテキストをtextareaに出力
         const fileContentTextArea = document.getElementById("fileContent");
         fileContentTextArea.value = text;
       } catch (error) {
@@ -25,17 +33,22 @@
     }
 
     async function writeFile() {
+      //ファイルハンドラの保有を確認
       if (!fileHandle) {
         alert("ファイルを読み込んでから保存してください。");
         return;
       }
 
+      //新たに保存するテキストをtextareaから取得
       const fileContentTextArea = document.getElementById("fileContent");
       const text = fileContentTextArea.value;
 
       try {
+        //ファイルハンドラから出力処理オブジェクトwriteableを取得
         const writable = await fileHandle.createWritable();
+        //保存するテキストを出力
         await writable.write(text);
+        //終了したのでテキストを閉じる
         await writable.close();
         alert("ファイルに書き込みました。");
       } catch (error) {
