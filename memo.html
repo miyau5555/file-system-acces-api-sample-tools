@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File System Access APIサンプル</title>
+</head>
+<body>
+  <button onclick="readFile()">ファイルを読み込む</button>
+  <button onclick="writeFile()">ファイルに書き込む</button>
+  <br>
+  <textarea id="fileContent" style="width: 100%; height: 200px;"></textarea>
+
+  <script>
+    let fileHandle = null;
+
+    async function readFile() {
+      try {
+        [fileHandle] = await window.showOpenFilePicker();
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        const fileContentTextArea = document.getElementById("fileContent");
+        fileContentTextArea.value = text;
+      } catch (error) {
+        console.error("ファイルを読み込む際にエラーが発生しました:", error);
+      }
+    }
+
+    async function writeFile() {
+      if (!fileHandle) {
+        alert("ファイルを読み込んでから保存してください。");
+        return;
+      }
+
+      const fileContentTextArea = document.getElementById("fileContent");
+      const text = fileContentTextArea.value;
+
+      try {
+        const writable = await fileHandle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        alert("ファイルに書き込みました。");
+      } catch (error) {
+        console.error("ファイルに書き込む際にエラーが発生しました:", error);
+      }
+    }
+  </script>
+</body>
+</html>
